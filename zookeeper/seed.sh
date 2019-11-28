@@ -1,30 +1,30 @@
 #!/bin/sh
 echo $zk_command
-$zk_command rmr /free2wheelers
-$zk_command create /free2wheelers ''
+$zk_command rmr /tw
+$zk_command create /tw ''
 
-$zk_command create /free2wheelers/stationDataNYC ''
-$zk_command create /free2wheelers/stationDataNYC/topic station_data_nyc
-$zk_command create /free2wheelers/stationDataNYC/checkpointLocation hdfs://$hdfs_server/free2wheelers/rawData/stationDataNYC/checkpoints
+$zk_command create /tw/stationDataNYC ''
+$zk_command create /tw/stationDataNYC/topic station_data_nyc
+$zk_command create /tw/stationDataNYC/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationDataNYC/checkpoints
 
-$zk_command create /free2wheelers/stationInformation ''
-$zk_command create /free2wheelers/stationInformation/kafkaBrokers $kafka_server
-$zk_command create /free2wheelers/stationInformation/topic station_information
-$zk_command create /free2wheelers/stationInformation/checkpointLocation hdfs://$hdfs_server/free2wheelers/rawData/stationInformation/checkpoints
-$zk_command create /free2wheelers/stationInformation/dataLocation hdfs://$hdfs_server/free2wheelers/rawData/stationInformation/data
+$zk_command create /tw/stationInformation ''
+$zk_command create /tw/stationInformation/kafkaBrokers $kafka_server
+$zk_command create /tw/stationInformation/topic station_information
+$zk_command create /tw/stationInformation/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationInformation/checkpoints
+$zk_command create /tw/stationInformation/dataLocation hdfs://$hdfs_server/tw/rawData/stationInformation/data
 
-$zk_command create /free2wheelers/stationStatus ''
-$zk_command create /free2wheelers/stationStatus/kafkaBrokers $kafka_server
-$zk_command create /free2wheelers/stationStatus/topic station_status
-$zk_command create /free2wheelers/stationStatus/checkpointLocation hdfs://$hdfs_server/free2wheelers/rawData/stationStatus/checkpoints
-$zk_command create /free2wheelers/stationStatus/dataLocation hdfs://$hdfs_server/free2wheelers/rawData/stationStatus/data
+$zk_command create /tw/stationStatus ''
+$zk_command create /tw/stationStatus/kafkaBrokers $kafka_server
+$zk_command create /tw/stationStatus/topic station_status
+$zk_command create /tw/stationStatus/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationStatus/checkpoints
+$zk_command create /tw/stationStatus/dataLocation hdfs://$hdfs_server/tw/rawData/stationStatus/data
 
-$zk_command create /free2wheelers/stationDataSF ''
-$zk_command create /free2wheelers/stationDataSF/kafkaBrokers $kafka_server
-$zk_command create /free2wheelers/stationDataSF/topic station_data_sf
-$zk_command create /free2wheelers/stationDataSF/checkpointLocation hdfs://$hdfs_server/free2wheelers/rawData/stationDataSF/checkpoints
-$zk_command create /free2wheelers/stationDataSF/dataLocation hdfs://$hdfs_server/free2wheelers/rawData/stationDataSF/data
+$zk_command create /tw/stationDataSF ''
+$zk_command create /tw/stationDataSF/kafkaBrokers $kafka_server
+$zk_command create /tw/stationDataSF/topic station_data_sf
+$zk_command create /tw/stationDataSF/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationDataSF/checkpoints
+$zk_command create /tw/stationDataSF/dataLocation hdfs://$hdfs_server/tw/rawData/stationDataSF/data
 
-$zk_command create /free2wheelers/output ''
-$zk_command create /free2wheelers/output/checkpointLocation hdfs://$hdfs_server/free2wheelers/stationMart/checkpoints
-$zk_command create /free2wheelers/output/dataLocation hdfs://$hdfs_server/free2wheelers/stationMart/data
+$zk_command create /tw/output ''
+$zk_command create /tw/output/checkpointLocation hdfs://$hdfs_server/tw/stationMart/checkpoints
+$zk_command create /tw/output/dataLocation hdfs://$hdfs_server/tw/stationMart/data

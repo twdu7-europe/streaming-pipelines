@@ -7,5 +7,5 @@ docker exec -it streamingdatapipeline_hadoop_1 /bin/bash
 ```
 and then you can look at files by running
 ```
-/usr/local/hadoop/bin/hadoop fs -ls /free2wheelers/stationMart/data
+/usr/local/hadoop/bin/hadoop fs -ls /tw/stationMart/data
 ```

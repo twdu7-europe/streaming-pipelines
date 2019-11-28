@@ -15,7 +15,7 @@ apply plugin: 'io.spring.dependency-management'
 
 bootJar {
     version = '0.1.0'
-    archiveName = "free2wheelers-citibike-apis-producer" + version + '.jar'
+    archiveName = "tw-citibike-apis-producer" + version + '.jar'
 }
 
 repositories {

@@ -6,12 +6,12 @@ lazy val root = (project in file(".")).
 
   settings(
     inThisBuild(List(
-      organization := "com.free2wheelers",
+      organization := "com.tw",
       scalaVersion := "2.11.8",
       version := "0.0.1"
     )),
 
-    name := "free2wheelers-station-transformer-nyc",
+    name := "tw-station-transformer-nyc",
     
     dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.9.10",
     dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.10",

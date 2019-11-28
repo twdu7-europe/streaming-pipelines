@@ -4,12 +4,12 @@ lazy val root = (project in file(".")).
 
   settings(
     inThisBuild(List(
-      organization := "com.free2wheelers",
+      organization := "com.tw",
       scalaVersion := "2.11.8",
       version := "0.0.1"
     )),
 
-    name := "free2wheelers-station-consumer",
+    name := "tw-station-consumer",
 
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.0.5" % "test",
