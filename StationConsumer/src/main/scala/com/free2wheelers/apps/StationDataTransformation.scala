@@ -10,9 +10,9 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import scala.util.parsing.json.JSON
 
-object StationStatusTransformation {
+object StationDataTransformation {
 
-  val sfToStationStatus: String => Seq[StationStatus] = raw_payload => {
+  val sfToStationStatus: String => Seq[StationData] = raw_payload => {
     val json = JSON.parseFull(raw_payload)
     val payload = json.get.asInstanceOf[Map[String, Any]]("payload")
     extractSFStationStatus(payload)
@@ -26,7 +26,7 @@ object StationStatusTransformation {
 
     stations.asInstanceOf[Seq[Map[String, Any]]]
       .map(x => {
-        StationStatus(
+        StationData(
           x("free_bikes").asInstanceOf[Double].toInt,
           x("empty_slots").asInstanceOf[Double].toInt,
           x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
@@ -52,7 +52,7 @@ object StationStatusTransformation {
   def nycStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
     import spark.implicits._
 
-    jsonDF.select(from_json($"raw_payload", ScalaReflection.schemaFor[StationStatus].dataType) as "status")
+    jsonDF.select(from_json($"raw_payload", ScalaReflection.schemaFor[StationData].dataType) as "status")
       .select($"status.*")
   }
 }

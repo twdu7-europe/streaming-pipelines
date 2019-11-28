@@ -1,11 +1,11 @@
 package com.free2wheelers.apps
 
-import com.free2wheelers.apps.StationStatusTransformation.nycStationStatusJson2DF
+import com.free2wheelers.apps.StationDataTransformation.nycStationStatusJson2DF
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.scalatest._
 
-class StationStatusTransformationTest extends FeatureSpec with Matchers with GivenWhenThen {
+class StationDataTransformationTest extends FeatureSpec with Matchers with GivenWhenThen {
 
   feature("Apply station status transformations to data frame") {
     val spark = SparkSession.builder.appName("Test App").master("local").getOrCreate()
@@ -26,7 +26,7 @@ class StationStatusTransformationTest extends FeatureSpec with Matchers with Giv
           "longitude":-73.97632328
           }"""
 
-      val schema = ScalaReflection.schemaFor[StationStatus].dataType //.asInstanceOf[StructType]
+      val schema = ScalaReflection.schemaFor[StationData].dataType //.asInstanceOf[StructType]
 
       Given("Sample data for station_status")
       val testDF1 = Seq(testStationData).toDF("raw_payload")

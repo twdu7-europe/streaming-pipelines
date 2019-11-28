@@ -1,6 +1,6 @@
 package com.free2wheelers.apps
 
-import com.free2wheelers.apps.StationStatusTransformation._
+import com.free2wheelers.apps.StationDataTransformation._
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
@@ -54,7 +54,7 @@ object StationApp {
 
     nycStationDF
       .union(sfStationDF)
-      .as[StationStatus]
+      .as[StationData]
       .groupByKey(r=>r.station_id)
       .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
       .map(_._2)
