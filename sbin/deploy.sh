@@ -30,7 +30,7 @@ Host emr-master.${COHORT}.training
 
 Host *.${COHORT}.training !bastion.${COHORT}.training
 	ForwardAgent yes
-	ProxyCommand ssh ${BASTION_PUBLIC_IP} -W %h:%p 2>/dev/null
+	ProxyCommand ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${BASTION_PUBLIC_IP} -W %h:%p 2>/dev/null
 	User ec2-user
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
