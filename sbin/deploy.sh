@@ -28,11 +28,17 @@ echo "
 Host emr-master.${COHORT}.training
     User hadoop
 
-Host *.${COHORT}.training
+Host *.${COHORT}.training !bastion.${COHORT}.training
 	ForwardAgent yes
 	ProxyCommand ssh ${BASTION_PUBLIC_IP} -W %h:%p 2>/dev/null
 	User ec2-user
     StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+
+Host bastion.${COHORT}.training
+    User ec2-user
+    HostName ${BASTION_PUBLIC_IP}
+    DynamicForward 6789
 " >> ~/.ssh/config
 
 echo "====SSH Config Updated===="
