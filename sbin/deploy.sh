@@ -47,8 +47,8 @@ echo "====Insert app config in zookeeper===="
 scp ./zookeeper/seed.sh kafka.${COHORT}.training:/tmp/zookeeper-seed.sh
 ssh kafka.${COHORT}.training '
 set -e
-export hdfs_server="emr-master.${COHORT}.training:8020"
-export kafka_server="kafka.${COHORT}.training:9092"
+export hdfs_server="emr-master.twdu3a.training:8020"
+export kafka_server="kafka.twdu3a.training:9092"
 export zk_command="zookeeper-shell localhost:2181"
 sh /tmp/zookeeper-seed.sh
 '
