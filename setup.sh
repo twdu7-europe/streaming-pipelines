@@ -54,4 +54,3 @@ $zk_command create /tw/output/dataLocation /tmp/tw/stationMart/data
 
 
 tail -f /dev/null
-echo "hi"
