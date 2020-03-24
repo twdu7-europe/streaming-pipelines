@@ -23,6 +23,7 @@ echo "
 	ForwardAgent yes
 	DynamicForward 6789
     StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
 
 Host emr-master.${COHORT}.training
     User hadoop
