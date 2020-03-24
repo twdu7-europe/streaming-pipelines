@@ -45,7 +45,7 @@ jobs:
                 fingerprints:
                     - "22:8a:cb:3b:e6:8d:d0:e5:48:1e:a2:43:3d:69:bf:d3"
             - run:
-                command: ./sbin/deploy.sh
+                command: ./sbin/deploy.sh $BASTION_PUBLIC_IP
 
 workflows:
     version: 2
