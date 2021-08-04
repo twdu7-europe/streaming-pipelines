@@ -155,9 +155,9 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
           row1.get(1) should be(14)
           row1.get(2) shouldBe true
           row1.get(3) shouldBe true
-          row1.get(4) should be(1536242527)
-          row1.get(5) should be("le-velo")
-          row1.get(6) should be("Le vélo")
+          row1.get(4) should be(1628003918L)
+          row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
+          row1.get(6) should be("8149-391 MICHELET")
           row1.get(7) should be(43.25402727813068)
           row1.get(8) should be(5.401873594694653)
     }
