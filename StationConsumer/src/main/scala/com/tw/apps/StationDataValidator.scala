@@ -9,9 +9,10 @@ object StationDataValidator {
   }
 
   def filterValidData(data: DataFrame): Array[Row] ={
-    val filtered = data.filter(col("longitude").isNotNull)
-    print("DISPLAYING FILTERED DATA ***************************************************************")
-    filtered.show()
+    val filtered = data
+      .filter(col("latitude").isNotNull)
+      .filter(col("longitude").isNotNull)
+
     filtered.collect()
   }
 }

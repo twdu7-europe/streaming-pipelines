@@ -6,8 +6,6 @@ import com.tw.apps.StationDataValidator._
 import org.apache.spark.sql.{Row, SparkSession}
 import org.scalatest._
 
-//      DONE 1. Check in the file that there is a long
-//      1.2     and lat for each station
 //      2. Confirm that each station id is listed only once.
 //      3. Bikes Available should be a non-negaitve number
 //      4. Docks Available should be a non-negaitve number
@@ -19,21 +17,20 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
 
     scenario("Validating missing longitude") {
       val testStationDataWithMissingLongitude = Seq(
-        buildStationRow(1),
-        buildStationRow(2, longitude = "null")
+        buildStationRow("1"),
+        buildStationRow("2", longitude = "null")
       )
 
-      val expectedResult =
-        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, 83, "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+      val expectedResult = Array(
+        Row.fromSeq(
+          Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)
+        )
+      )
 
       Given("Some rows are missing longitude")
       val testDF = testStationDataWithMissingLongitude.toDF("raw_payload")
-
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
-      print("DISPLAYING TRANSFORMED JSON DATA ***************************************************************")
-
-      transformedDF.show()
       When("Validations are applied")
       val filteredResult = filterValidData(transformedDF)
 
@@ -43,21 +40,17 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
 
     scenario("Validating missing latitude") {
       val testStationDataWithMissingLatitude = Seq(
-        buildStationRow(1),
-        buildStationRow(2, latitude = "null")
+        buildStationRow("1"),
+        buildStationRow("2", latitude = "null")
       )
 
       val expectedResult =
-        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, 1, "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows are missing latitude")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
-
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
-      print("DISPLAYING TRANSFORMED JSON DATA ***************************************************************")
-
-      transformedDF.show()
       When("Validations are applied")
       val filteredResult = filterValidData(transformedDF)
 
