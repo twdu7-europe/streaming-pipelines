@@ -13,15 +13,19 @@ import scala.util.parsing.json.JSON
 object StationDataTransformation {
 
   val sfToStationStatus: String => Seq[StationData] = raw_payload => {
-    val json = JSON.parseFull(raw_payload)
-    val payload = json.get.asInstanceOf[Map[String, Any]]("payload")
+    val payload: Any = preparePayload(raw_payload)
     extractSFStationStatus(payload)
   }
 
   val marseilleToStationStatus: String => Seq[StationData] = raw_payload => {
+    val payload: Any = preparePayload(raw_payload)
+    extractMarseilleStationStatus(payload)
+  }
+
+  private def preparePayload(raw_payload: String): Any = {
     val json = JSON.parseFull(raw_payload)
     val payload = json.get.asInstanceOf[Map[String, Any]]("payload")
-    extractMarseilleStationStatus(payload)
+    payload
   }
 
   private def extractSFStationStatus(payload: Any) = {
