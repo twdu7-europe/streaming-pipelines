@@ -6,9 +6,6 @@ import com.tw.apps.StationDataValidator._
 import org.apache.spark.sql.{Row, SparkSession}
 import org.scalatest._
 
-//      2. Confirm that each station id is listed only once.
-//      4. Docks Available should be a non-negaitve number
-
 class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenThen {
   feature("Apply station status validation to data frame") {
     val spark = SparkSession.builder.appName("Test App").master("local").getOrCreate()
@@ -67,6 +64,47 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
         Array(Row.fromSeq(Seq(0, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows have negative bikes available")
+      val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
+      val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
+
+      When("Validations are applied")
+      val filteredResult = filterValidData(transformedDF)
+
+      Then("Only valid rows are retrieved")
+      assert(filteredResult sameElements expectedResult)
+    }
+
+    scenario("Validating docks available is a non-negative number") {
+      val testStationDataWithMissingLatitude = Seq(
+        buildStationRow("1", docksAvailable = 0),
+        buildStationRow("2", docksAvailable = -3)
+      )
+
+      val expectedResult =
+        Array(Row.fromSeq(Seq(19, 0, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+
+      Given("Some rows have negative docks available")
+      val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
+      val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
+
+      When("Validations are applied")
+      val filteredResult = filterValidData(transformedDF)
+
+      Then("Only valid rows are retrieved")
+      assert(filteredResult sameElements expectedResult)
+    }
+
+    scenario("Validating station ids are listed once") {
+      val testStationDataWithMissingLatitude = Seq(
+        buildStationRow("1"),
+        buildStationRow("2"),
+        buildStationRow("2")
+      )
+
+      val expectedResult =
+        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+
+      Given("Some rows have the same station id")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
