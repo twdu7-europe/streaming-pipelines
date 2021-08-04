@@ -46,7 +46,7 @@ object StationDataTransformation {
       })
   }
 
-  private def extractMarseilleStationStatus(payload: Any) = {
+  private def extractMarseilleStationStatus(payload: Any): Seq[StationData] = {
 
     val network: Any = payload.asInstanceOf[Map[String, Any]]("network")
 

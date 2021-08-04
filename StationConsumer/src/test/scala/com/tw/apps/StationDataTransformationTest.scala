@@ -1,8 +1,8 @@
 package com.tw.apps
 
-import StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF}
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import com.tw.apps.StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF}
 import org.apache.spark.sql.catalyst.ScalaReflection
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.scalatest._
 
 class StationDataTransformationTest extends FeatureSpec with Matchers with GivenWhenThen {
@@ -69,7 +69,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
 
     scenario("Transform marseille station data") {
           val testDataMarseille =
-                """"network": {
+                """{"payload": {"network": {
             "company": [
               "JCDecaux"
             ],
@@ -120,15 +120,15 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
                     "longitude": 5.399686062414487,
                     "name": "9207- TEISSEIRE - ROUBAUD",
                     "timestamp": "2021-08-03T15:18:38.428000Z"
-                  },
+                  }
             ]
-          }"""
+          }}}"""
 
           Given("Sample data for status_information")
           val testDF1 = Seq(testDataMarseille).toDF("raw_payload")
 
           When("Transformations are applied")
-          val resultDF1 = testDF1.transform(marsStationStatusJson2DF(_, spark))
+          val resultDF1: DataFrame = testDF1.transform(marsStationStatusJson2DF(_, spark))
 
           Then("Useful columns are extracted")
           resultDF1.schema.fields(0).name should be("bikes_available")
@@ -150,7 +150,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
           resultDF1.schema.fields(8).name should be("longitude")
           resultDF1.schema.fields(8).dataType.typeName should be("double")
 
-          val row1 = resultDF1.head()
+          val row1: Row = resultDF1.head()
           row1.get(0) should be(5)
           row1.get(1) should be(14)
           row1.get(2) shouldBe true
