@@ -7,6 +7,9 @@
 # Gradle
 .gradle/
 
+# bsp
+.bsp/
+
 # Vim
 *.swp
 
