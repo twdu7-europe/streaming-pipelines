@@ -12,6 +12,7 @@ object StationDataValidator {
     val filtered = data
       .filter(col("latitude").isNotNull)
       .filter(col("longitude").isNotNull)
+      .filter(col("bikes_available") >= 0)
 
     filtered.collect()
   }
