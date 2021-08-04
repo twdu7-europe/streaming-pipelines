@@ -1,6 +1,6 @@
 package com.tw.apps
 
-import com.tw.apps.StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF}
+import com.tw.apps.StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF, sfStationStatusJson2DF}
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.scalatest._
@@ -68,8 +68,8 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
     }
 
     scenario("Transform marseille station data") {
-          val testDataMarseille =
-                """{"payload": {"network": {
+      val testDataMarseille =
+        """{"payload": {"network": {
             "company": [
               "JCDecaux"
             ],
@@ -124,42 +124,116 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
             ]
           }}}"""
 
-          Given("Sample data for status_information")
-          val testDF1 = Seq(testDataMarseille).toDF("raw_payload")
+      Given("Sample data for status_information")
+      val testDF1 = Seq(testDataMarseille).toDF("raw_payload")
 
-          When("Transformations are applied")
-          val resultDF1: DataFrame = testDF1.transform(marsStationStatusJson2DF(_, spark))
+      When("Transformations are applied")
+      val resultDF1: DataFrame = testDF1.transform(marsStationStatusJson2DF(_, spark))
 
-          Then("Useful columns are extracted")
-          resultDF1.schema.fields(0).name should be("bikes_available")
-          resultDF1.schema.fields(0).dataType.typeName should be("integer")
-          resultDF1.schema.fields(1).name should be("docks_available")
-          resultDF1.schema.fields(1).dataType.typeName should be("integer")
-          resultDF1.schema.fields(2).name should be("is_renting")
-          resultDF1.schema.fields(2).dataType.typeName should be("boolean")
-          resultDF1.schema.fields(3).name should be("is_returning")
-          resultDF1.schema.fields(3).dataType.typeName should be("boolean")
-          resultDF1.schema.fields(4).name should be("last_updated")
-          resultDF1.schema.fields(4).dataType.typeName should be("long")
-          resultDF1.schema.fields(5).name should be("station_id")
-          resultDF1.schema.fields(5).dataType.typeName should be("string")
-          resultDF1.schema.fields(6).name should be("name")
-          resultDF1.schema.fields(6).dataType.typeName should be("string")
-          resultDF1.schema.fields(7).name should be("latitude")
-          resultDF1.schema.fields(7).dataType.typeName should be("double")
-          resultDF1.schema.fields(8).name should be("longitude")
-          resultDF1.schema.fields(8).dataType.typeName should be("double")
+      Then("Useful columns are extracted")
+      resultDF1.schema.fields(0).name should be("bikes_available")
+      resultDF1.schema.fields(0).dataType.typeName should be("integer")
+      resultDF1.schema.fields(1).name should be("docks_available")
+      resultDF1.schema.fields(1).dataType.typeName should be("integer")
+      resultDF1.schema.fields(2).name should be("is_renting")
+      resultDF1.schema.fields(2).dataType.typeName should be("boolean")
+      resultDF1.schema.fields(3).name should be("is_returning")
+      resultDF1.schema.fields(3).dataType.typeName should be("boolean")
+      resultDF1.schema.fields(4).name should be("last_updated")
+      resultDF1.schema.fields(4).dataType.typeName should be("long")
+      resultDF1.schema.fields(5).name should be("station_id")
+      resultDF1.schema.fields(5).dataType.typeName should be("string")
+      resultDF1.schema.fields(6).name should be("name")
+      resultDF1.schema.fields(6).dataType.typeName should be("string")
+      resultDF1.schema.fields(7).name should be("latitude")
+      resultDF1.schema.fields(7).dataType.typeName should be("double")
+      resultDF1.schema.fields(8).name should be("longitude")
+      resultDF1.schema.fields(8).dataType.typeName should be("double")
 
-          val row1: Row = resultDF1.head()
-          row1.get(0) should be(5)
-          row1.get(1) should be(14)
-          row1.get(2) shouldBe true
-          row1.get(3) shouldBe true
-          row1.get(4) should be(1628003918L)
-          row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
-          row1.get(6) should be("8149-391 MICHELET")
-          row1.get(7) should be(43.25402727813068)
-          row1.get(8) should be(5.401873594694653)
+      val row1: Row = resultDF1.head()
+      row1.get(0) should be(5)
+      row1.get(1) should be(14)
+      row1.get(2) shouldBe true
+      row1.get(3) shouldBe true
+      row1.get(4) should be(1628003918L)
+      row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
+      row1.get(6) should be("8149-391 MICHELET")
+      row1.get(7) should be(43.25402727813068)
+      row1.get(8) should be(5.401873594694653)
+    }
+
+    scenario("Transform SF station data") {
+      val testDataSF =
+        """{"payload": {"network": {
+            "company": [
+              "Motivate International, Inc."
+            ],
+            "gbfs_href": "https://gbfs.fordgobike.com/gbfs/gbfs.json",
+            "href": "/v2/networks/le-velo",
+            "id": 	"ford-gobike",
+            "location": {
+                  "city": "San Francisco Bay Area, CA",
+                  "country": "US",
+                  "latitude": 43.296482,
+                  "longitude": 5.36978
+                },
+            "name": "Bay Wheels",
+            "stations": [
+              {
+                    "empty_slots": 14,
+                    "extra": {
+                      "address": "391 MICHELET - 391 BOULEVARD MICHELET",
+                      "last_update": 1628003594000,
+                      "renting": 1,
+                      "returning": 0,
+                      "uid": 8149
+                    },
+                    "free_bikes": 5,
+                    "id": "686e48654a218c70daf950a4e893e5b0",
+                    "latitude": 43.25402727813068,
+                    "longitude": 5.401873594694653,
+                    "name": "8149-391 MICHELET",
+                    "timestamp": "2021-08-03T15:18:38.421000Z"
+                  }
+            ]
+          }}}"""
+
+      Given("Sample data for status_information")
+      val testDF1 = Seq(testDataSF).toDF("raw_payload")
+
+      When("Transformations are applied")
+      val resultDF1: DataFrame = testDF1.transform(sfStationStatusJson2DF(_, spark))
+
+      Then("Useful columns are extracted")
+      resultDF1.schema.fields(0).name should be("bikes_available")
+      resultDF1.schema.fields(0).dataType.typeName should be("integer")
+      resultDF1.schema.fields(1).name should be("docks_available")
+      resultDF1.schema.fields(1).dataType.typeName should be("integer")
+      resultDF1.schema.fields(2).name should be("is_renting")
+      resultDF1.schema.fields(2).dataType.typeName should be("boolean")
+      resultDF1.schema.fields(3).name should be("is_returning")
+      resultDF1.schema.fields(3).dataType.typeName should be("boolean")
+      resultDF1.schema.fields(4).name should be("last_updated")
+      resultDF1.schema.fields(4).dataType.typeName should be("long")
+      resultDF1.schema.fields(5).name should be("station_id")
+      resultDF1.schema.fields(5).dataType.typeName should be("string")
+      resultDF1.schema.fields(6).name should be("name")
+      resultDF1.schema.fields(6).dataType.typeName should be("string")
+      resultDF1.schema.fields(7).name should be("latitude")
+      resultDF1.schema.fields(7).dataType.typeName should be("double")
+      resultDF1.schema.fields(8).name should be("longitude")
+      resultDF1.schema.fields(8).dataType.typeName should be("double")
+
+      val row1: Row = resultDF1.head()
+      row1.get(0) should be(5)
+      row1.get(1) should be(14)
+      row1.get(2) shouldBe true
+      row1.get(3) shouldBe false
+      row1.get(4) should be(1628003918L)
+      row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
+      row1.get(6) should be("8149-391 MICHELET")
+      row1.get(7) should be(43.25402727813068)
+      row1.get(8) should be(5.401873594694653)
     }
   }
 }
