@@ -1,7 +1,7 @@
 package com.tw.apps
 
 object StationDataBuilder {
-  def buildStationRow(stationId: Int, latitude: String = "40.68382604", longitude: String = "-73.97632328"): String = {
+  def buildStationRow(stationId: String, latitude: String = "40.68382604", longitude: String = "-73.97632328"): String = {
     s"""
        {
           "station_id":"${stationId}",
