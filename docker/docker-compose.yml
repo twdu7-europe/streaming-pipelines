@@ -80,6 +80,16 @@ services:
         networks:
           - streaming-data-internal
 
+    station-marseille-producer:
+      build:
+        context: ../CitibikeApiProducer
+        dockerfile: Dockerfile-station-marseille
+      depends_on:
+        - kafka
+        - zookeeper-seed
+      networks:
+        - streaming-data-internal
+
     raw-station-information-data-saver:
         build:
             context: ../RawDataSaver
@@ -139,6 +149,7 @@ services:
           - kafka
           - station-status-producer
           - station-san-francisco-producer
+          - station-marseille-producer
           - raw-station-status-data-saver
         volumes:
           - ~/.ivy2:/root/.ivy2:rw
