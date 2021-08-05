@@ -28,7 +28,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
       When("Validations are applied")
-      val filteredResult = filterValidData(transformedDF)
+      val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
       assert(filteredResult sameElements expectedResult)
@@ -48,7 +48,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
       When("Validations are applied")
-      val filteredResult = filterValidData(transformedDF)
+      val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
       assert(filteredResult sameElements expectedResult)
@@ -68,7 +68,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
       When("Validations are applied")
-      val filteredResult = filterValidData(transformedDF)
+      val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
       assert(filteredResult sameElements expectedResult)
@@ -88,7 +88,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
       When("Validations are applied")
-      val filteredResult = filterValidData(transformedDF)
+      val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
       assert(filteredResult sameElements expectedResult)
@@ -109,10 +109,83 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
 
       When("Validations are applied")
-      val filteredResult = filterValidData(transformedDF)
+      val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
       assert(filteredResult sameElements expectedResult)
     }
+  }
+
+  feature("Return the invalid data") {
+
+    val spark = SparkSession.builder.appName("Test App").master("local").getOrCreate()
+    import spark.implicits._
+
+    scenario("Should return empty array when there is no invalid data") {
+      val testValidStationData = Seq(
+        buildStationRow("1"),
+        buildStationRow("2")
+      )
+
+      val expectedResult = Array.empty[Row]
+
+      Given("We have only valid data")
+      val testDF = testValidStationData.toDF("raw_payload")
+      val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
+
+      When("Validation is applied")
+      val (_, filteredInvalidData) = filterValidData(transformedDF)
+
+      Then("Empty array should be returned")
+      assert(filteredInvalidData sameElements expectedResult)
+    }
+
+    scenario("Should return only invalid data") {
+      val invalidData = buildStationRow("2", latitude = null)
+
+      val testValidAndInvalidStationData = Seq(
+        buildStationRow("1"),
+        invalidData
+      )
+
+      val expectedResult = Seq(invalidData).toDF("raw_payload").transform(nycStationStatusJson2DF(_, spark)).collect()
+
+      Given("We have only valid and invalid data")
+      val testDF = testValidAndInvalidStationData.toDF("raw_payload")
+      val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
+
+      When("Validation is applied")
+      val (_, filteredInvalidData) = filterValidData(transformedDF)
+
+      Then("Only invalid data should be returned")
+      assert(filteredInvalidData sameElements expectedResult)
+    }
+
+    scenario("Should return as invalid data when having duplicated station_id") {
+
+      val testValidAndInvalidStationData = Seq(
+        buildStationRow("1"),
+        buildStationRow("2"),
+        buildStationRow("2")
+      )
+
+      val expectedData = Seq(
+        buildStationRow("2"),
+        buildStationRow("2")
+      )
+
+      val expectedResult = expectedData.toDF("raw_payload").transform(nycStationStatusJson2DF(_, spark)).collect()
+
+      Given("We have only valid and invalid data with duplicated station_ids")
+      val testDF = testValidAndInvalidStationData.toDF("raw_payload")
+      val transformedDF = testDF.transform(nycStationStatusJson2DF(_, spark))
+
+      When("Validation is applied")
+      val (_, filteredInvalidData) = filterValidData(transformedDF)
+
+      Then("Only invalid data should be returned")
+      assert(filteredInvalidData sameElements expectedResult)
+    }
+
   }
 }

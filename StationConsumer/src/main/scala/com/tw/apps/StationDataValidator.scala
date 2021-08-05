@@ -5,15 +5,25 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.expressions.Window
 
 object StationDataValidator {
-  def filterValidData(data: DataFrame): Array[Row] ={
-    val filtered = data
-      .filter(col("latitude").isNotNull)
-      .filter(col("longitude").isNotNull)
-      .filter(col("bikes_available") >= 0)
-      .filter(col("docks_available") >= 0)
-      .withColumn("station_id_count", count("*").over(Window.partitionBy(col("station_id"))))
-      .filter(col("station_id_count")===1).drop(col("station_id_count"))
+  def filterValidData(data: DataFrame): (Array[Row], Array[Row]) ={
 
-    filtered.collect()
+    val validation = col("latitude").isNotNull &&
+      col("longitude").isNotNull &&
+      col("bikes_available") >= 0 &&
+      col("docks_available") >= 0 &&
+      col("station_id_count")===1
+
+    val valid = data
+      .withColumn("station_id_count", count("*").over(Window.partitionBy(col("station_id"))))
+      .filter(validation)
+      .drop(col("station_id_count"))
+
+    val invalid = data
+      .withColumn("station_id_count", count("*").over(Window.partitionBy(col("station_id"))))
+      .filter(not(validation))
+      .drop(col("station_id_count"))
+
+
+    (valid.collect(), invalid.collect())
   }
 }
