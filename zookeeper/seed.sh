@@ -28,6 +28,8 @@ $zk_command create /tw/stationDataSF/dataLocation hdfs://$hdfs_server/tw/rawData
 $zk_command create /tw/stationDataMars ''
 $zk_command create /tw/stationDataMars/kafkaBrokers $kafka_server
 $zk_command create /tw/stationDataMars/topic station_data_mars
+$zk_command create /tw/stationDataMars/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationDataMars/checkpoints
+$zk_command create /tw/stationDataMars/dataLocation hdfs://$hdfs_server/tw/rawData/stationDataMars/data
 
 $zk_command create /tw/output ''
 $zk_command create /tw/output/checkpointLocation hdfs://$hdfs_server/tw/stationMart/checkpoints
