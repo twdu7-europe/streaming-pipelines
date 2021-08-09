@@ -35,6 +35,8 @@ $zk_command create /tw/stationInformation/topic station_information
 $zk_command create /tw/stationInformation/checkpointLocation /tmp/tw/rawData/stationInformation/checkpoints
 $zk_command create /tw/stationInformation/dataLocation /tmp/tw/rawData/stationInformation/data
 
+$zk_command create /tw/aggregatedFiles/dataLocation /tmp/tw/aggregatedRawData/aggregated/data
+
 $zk_command create /tw/stationStatus ''
 $zk_command create /tw/stationStatus/kafkaBrokers 127.0.0.1:9092
 $zk_command create /tw/stationStatus/topic station_status

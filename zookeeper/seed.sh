@@ -13,6 +13,8 @@ $zk_command create /tw/stationInformation/topic station_information
 $zk_command create /tw/stationInformation/checkpointLocation hdfs://$hdfs_server/tw/rawData/stationInformation/checkpoints
 $zk_command create /tw/stationInformation/dataLocation hdfs://$hdfs_server/tw/rawData/stationInformation/data
 
+$zk_command create /tw/aggregatedFiles/dataLocation hdfs://$hdfs_server/tw/aggregatedRawData/aggregated/data
+
 $zk_command create /tw/stationStatus ''
 $zk_command create /tw/stationStatus/kafkaBrokers $kafka_server
 $zk_command create /tw/stationStatus/topic station_status
