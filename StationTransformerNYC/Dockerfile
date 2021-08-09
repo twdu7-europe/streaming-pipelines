@@ -1,7 +1,14 @@
 FROM ryandjf/docker-spark
 
+RUN wget -qO - https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz | \
+    tar -xz -C /usr/local/ && \
+    cd /usr/local/ && \
+    rm spark && \
+    ln -s spark-2.4.0-bin-hadoop2.7 spark && \
+    cp spark/conf/log4j.properties.template spark/conf/log4j.properties \
+
 ADD target/scala-2.11/tw-station-transformer-nyc_2.11-0.0.1.jar /app.jar
-ENTRYPOINT spark-submit --class com.tw.apps.StationApp --name StationApp --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0  /app.jar
+ENTRYPOINT spark-submit --class com.tw.apps.StationApp --name StationApp --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.0  /app.jar
 
 
 

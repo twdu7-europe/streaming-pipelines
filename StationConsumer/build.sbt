@@ -1,4 +1,4 @@
-val sparkVersion = "2.3.0"
+val sparkVersion = "2.4.0"
 
 lazy val excludeJpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
 
