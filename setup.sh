@@ -23,7 +23,7 @@ mkdir -p /tmp/tw/rawData/stationSanFrancisco/checkpoints
 mkdir -p /tmp/tw/rawData/stationSanFrancisco/data
 mkdir -p /tmp/tw/stationMart/checkpoints
 mkdir -p /tmp/tw/stationMart/data
-
+mkdir -p /tmp/tw/aggregatedRawData/aggregated/data
 
 
 zk_command="zookeeper-shell.sh 127.0.0.1:2181"
@@ -35,6 +35,7 @@ $zk_command create /tw/stationInformation/topic station_information
 $zk_command create /tw/stationInformation/checkpointLocation /tmp/tw/rawData/stationInformation/checkpoints
 $zk_command create /tw/stationInformation/dataLocation /tmp/tw/rawData/stationInformation/data
 
+$zk_command create /tw/aggregatedFiles ''
 $zk_command create /tw/aggregatedFiles/dataLocation /tmp/tw/aggregatedRawData/aggregated/data
 
 $zk_command create /tw/stationStatus ''

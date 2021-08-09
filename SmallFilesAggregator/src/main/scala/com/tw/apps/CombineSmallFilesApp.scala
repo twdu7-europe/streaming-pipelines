@@ -16,6 +16,7 @@ object CombineSmallFilesApp {
     }
     val zookeeperConnectionString = args(0)
     val zookeeperFolder = args(1)
+    val zookeeperOutput = args(2)
 
     val retryPolicy = new ExponentialBackoffRetry(1000, 3)
 
@@ -27,21 +28,21 @@ object CombineSmallFilesApp {
       zkClient.getData.watched.forPath(s"$zookeeperFolder/dataLocation"))
 
     val aggregatedFilesLocation = new String(
-      zkClient.getData.watched.forPath(s"$zookeeperFolder/dataLocation"))
+      zkClient.getData.watched.forPath(s"$zookeeperOutput/dataLocation"))
 
     val spark = SparkSession.builder
       .appName("SmallFileAggregator")
       .getOrCreate()
 
-    val fs: FileSystem = FileSystem.get(spark.sparkContext.hadoopConfiguration)
-
-    val directorySize = fs.getContentSummary(new Path("/path/path")).getLength
-
-    val blockSize = spark.sparkContext.hadoopConfiguration.get("dfs.blocksize")
-    val repartitionFactor=Math.ceil(directorySize/blockSize).toInt
+//    val fs: FileSystem = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+//
+//    val directorySize = fs.getContentSummary(new Path(s"$zookeeperFolder/dataLocation")).getLength
+//
+//    val blockSize = spark.sparkContext.hadoopConfiguration.get("dfs.blocksize").toFloat
+//    val repartitionFactor = Math.ceil(directorySize/blockSize).toInt
 
     val smallFiles = spark.read.parquet("path", smallFilesLocation)
-    smallFiles.repartition(repartitionFactor)
+    smallFiles.repartition(20)
       .write
       .parquet(aggregatedFilesLocation)
   }

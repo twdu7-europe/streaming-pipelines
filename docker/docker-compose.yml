@@ -195,5 +195,22 @@ services:
           - streaming-data-internal
         restart: on-failure
 
+    small-files-aggregator-sf:
+      build:
+        context: ../SmallFilesAggregator
+        dockerfile: Dockerfile-file-aggregator-SF
+      depends_on:
+        - station-information-producer
+        - station-status-producer
+        - station-san-francisco-producer
+        - station-marseille-producer
+        - hadoop-seed
+        - zookeeper-seed
+      volumes:
+        - ~/.ivy2:/root/.ivy2:rw
+      networks:
+        - streaming-data-internal
+      restart: on-failure
+
 networks:
     streaming-data-internal:
