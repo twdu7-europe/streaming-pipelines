@@ -1,8 +1,12 @@
 package com.tw.apps
 
-import StationDataTransformation._
+import com.tw.apps.StationDataTransformation._
+import com.tw.apps.StationDataValidator.filterValidData
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import org.apache.spark.sql.functions.{col, from_unixtime, last, window}
+import org.apache.spark.sql.types.TimestampType
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, from_unixtime}
 
@@ -31,6 +35,9 @@ object StationApp {
 
     val outputLocation = new String(
       zkClient.getData.watched.forPath("/tw/output/dataLocation"))
+
+    val invalidOutputLocation = new String(
+      zkClient.getData.watched.forPath("/tw/output/invalidDataLocation"))
 
     val spark = SparkSession.builder
       .appName("StationConsumer")
@@ -71,21 +78,52 @@ object StationApp {
       .selectExpr("CAST(value AS STRING) as raw_payload")
       .transform(marsStationStatusJson2DF(_, spark))
 
-    nycStationDF
+    val resultsDF = nycStationDF
       .union(sfStationDF)
       .union(marsStationDF)
       .as[StationData]
-      .groupByKey(r=>r.station_id)
-      .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
-      .map(_._2)
-      .withColumn("iso_timestamp",from_unixtime(col("last_updated"), "yyyy-MM-dd HH:mm:ss"))
+      .withColumn("iso_timestamp", from_unixtime(col("last_updated")).cast(TimestampType))
+      .withWatermark("iso_timestamp", "1 minute")
+      .groupBy(window(col("iso_timestamp"), "10 minutes"), col("station_id"))
+      .agg(
+        last(col("iso_timestamp")).alias("iso_timestamp"),
+        last(col("bikes_available")).alias("bikes_available"),
+        last(col("docks_available")).alias("docks_available"),
+        last(col("is_renting")).alias("is_renting"),
+        last(col("is_returning")).alias("is_returning"),
+        last(col("last_updated")).alias("last_updated"),
+        last(col("name")).alias("name"),
+        last(col("latitude")).alias("latitude"),
+        last(col("longitude")).alias("longitude")
+      ).drop("window")
+
+    resultsDF
       .writeStream
-      .format("overwriteCSV")
-      .outputMode("complete")
-      .option("header", true)
-      .option("truncate", false)
+      .outputMode("append")
       .option("checkpointLocation", checkpointLocation)
-      .option("path", outputLocation)
+      .foreachBatch((batchDF: DataFrame, batchId: Long) => {
+          batchDF.persist()
+          val (valid: DataFrame, invalid: DataFrame) = filterValidData(batchDF)
+          valid
+            .write
+            .format("csv")
+            .mode(SaveMode.Append)
+            .option("header", true)
+            .option("truncate", false)
+            .option("path", outputLocation)
+            .save()
+
+        invalid
+          .write
+          .format("csv")
+          .mode(SaveMode.Append)
+          .option("header", true)
+          .option("truncate", false)
+          .option("path", invalidOutputLocation)
+          .save()
+
+          batchDF.unpersist()
+      })
       .start()
       .awaitTermination()
 
