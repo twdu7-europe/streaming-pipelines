@@ -4,6 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.streaming.Trigger
 
 object StationLocationApp {
   def main(args: Array[String]): Unit = {
@@ -47,6 +48,7 @@ object StationLocationApp {
       .writeStream
       .partitionBy("date")
       .outputMode("append")
+      .trigger(Trigger.ProcessingTime("30 minutes"))
       .format("parquet")
       .option("checkpointLocation", checkpointLocation)
       .option("path", dataLocation)
