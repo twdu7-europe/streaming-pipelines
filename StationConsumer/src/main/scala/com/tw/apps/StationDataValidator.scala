@@ -5,13 +5,13 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.expressions.Window
 
 object StationDataValidator {
-  def filterValidData(data: DataFrame): (Array[Row], Array[Row]) ={
+  def filterValidData(data: DataFrame): (DataFrame, DataFrame) = {
 
     val validation = col("latitude").isNotNull &&
       col("longitude").isNotNull &&
       col("bikes_available") >= 0 &&
       col("docks_available") >= 0 &&
-      col("station_id_count")===1
+      col("station_id_count") === 1
 
     val valid = data
       .withColumn("station_id_count", count("*").over(Window.partitionBy(col("station_id"))))
@@ -24,6 +24,6 @@ object StationDataValidator {
       .drop(col("station_id_count"))
 
 
-    (valid.collect(), invalid.collect())
+    (valid, invalid)
   }
 }
