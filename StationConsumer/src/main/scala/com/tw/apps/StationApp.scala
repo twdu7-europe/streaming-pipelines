@@ -1,9 +1,9 @@
 package com.tw.apps
 
-import StationDataTransformation._
+import com.tw.apps.StationDataTransformation._
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 object StationApp {
 
@@ -68,22 +68,29 @@ object StationApp {
       .selectExpr("CAST(value AS STRING) as raw_payload")
       .transform(marsStationStatusJson2DF(_, spark))
 
-    nycStationDF
+    val resultDF = nycStationDF
       .union(sfStationDF)
       .union(marsStationDF)
       .as[StationData]
-      .groupByKey(r=>r.station_id)
-      .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
+      .groupByKey(r => r.station_id)
+      .reduceGroups((r1, r2) => if (r1.last_updated > r2.last_updated) r1 else r2)
       .map(_._2)
+
+    resultDF
       .writeStream
-      .format("overwriteCSV")
+      .foreachBatch((data: Dataset[StationData], batchId: Long) =>
+        data
+          .write
+          .format("csv")
+          .option("header", value = true)
+          .option("truncate", value = false)
+          .save(outputLocation)
+      )
       .outputMode("complete")
-      .option("header", true)
-      .option("truncate", false)
       .option("checkpointLocation", checkpointLocation)
-      .option("path", outputLocation)
       .start()
       .awaitTermination()
 
   }
+
 }
