@@ -5,7 +5,7 @@ case class StationData(
                         docks_available: Integer,
                         is_renting: Boolean,
                         is_returning: Boolean,
-                        last_updated: Long,
+                        last_updated: String,
                         station_id: String,
                         name: String,
                         latitude: Double,

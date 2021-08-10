@@ -19,7 +19,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
 
       val expectedResult = Array(
         Row.fromSeq(
-          Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)
+          Seq(19, 41, true, true, "1536242527", "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)
         )
       )
 
@@ -41,7 +41,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       )
 
       val expectedResult =
-        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+        Array(Row.fromSeq(Seq(19, 41, true, true, "1536242527", "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows are missing latitude")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
@@ -61,7 +61,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       )
 
       val expectedResult =
-        Array(Row.fromSeq(Seq(0, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+        Array(Row.fromSeq(Seq(0, 41, true, true, "1536242527", "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows have negative bikes available")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
@@ -81,7 +81,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       )
 
       val expectedResult =
-        Array(Row.fromSeq(Seq(19, 0, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+        Array(Row.fromSeq(Seq(19, 0, true, true, "1536242527", "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows have negative docks available")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
@@ -102,7 +102,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       )
 
       val expectedResult =
-        Array(Row.fromSeq(Seq(19, 41, true, true, 1536242527, "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
+        Array(Row.fromSeq(Seq(19, 41, true, true, "1536242527", "1", "Atlantic Ave & Fort Greene Pl", 40.68382604, -73.97632328)))
 
       Given("Some rows have the same station id")
       val testDF = testStationDataWithMissingLatitude.toDF("raw_payload")
