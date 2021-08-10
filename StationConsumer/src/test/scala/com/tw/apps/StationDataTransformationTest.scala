@@ -45,7 +45,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       resultDF1.schema.fields(3).name should be("is_returning")
       resultDF1.schema.fields(3).dataType.typeName should be("boolean")
       resultDF1.schema.fields(4).name should be("last_updated")
-      resultDF1.schema.fields(4).dataType.typeName should be("long")
+      resultDF1.schema.fields(4).dataType.typeName should be("string")
       resultDF1.schema.fields(5).name should be("station_id")
       resultDF1.schema.fields(5).dataType.typeName should be("string")
       resultDF1.schema.fields(6).name should be("name")
@@ -60,7 +60,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       row1.get(1) should be(41)
       row1.get(2) shouldBe true
       row1.get(3) shouldBe true
-      row1.get(4) should be(1536242527)
+      row1.get(4) should be("1536242527")
       row1.get(5) should be("83")
       row1.get(6) should be("Atlantic Ave & Fort Greene Pl")
       row1.get(7) should be(40.68382604)
@@ -140,7 +140,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       resultDF1.schema.fields(3).name should be("is_returning")
       resultDF1.schema.fields(3).dataType.typeName should be("boolean")
       resultDF1.schema.fields(4).name should be("last_updated")
-      resultDF1.schema.fields(4).dataType.typeName should be("long")
+      resultDF1.schema.fields(4).dataType.typeName should be("string")
       resultDF1.schema.fields(5).name should be("station_id")
       resultDF1.schema.fields(5).dataType.typeName should be("string")
       resultDF1.schema.fields(6).name should be("name")
@@ -155,7 +155,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       row1.get(1) should be(14)
       row1.get(2) shouldBe true
       row1.get(3) shouldBe true
-      row1.get(4) should be(1628003918L)
+      row1.get(4) should be("2021-08-03T15:18:38Z")
       row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
       row1.get(6) should be("8149-391 MICHELET")
       row1.get(7) should be(43.25402727813068)
@@ -214,7 +214,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       resultDF1.schema.fields(3).name should be("is_returning")
       resultDF1.schema.fields(3).dataType.typeName should be("boolean")
       resultDF1.schema.fields(4).name should be("last_updated")
-      resultDF1.schema.fields(4).dataType.typeName should be("long")
+      resultDF1.schema.fields(4).dataType.typeName should be("string")
       resultDF1.schema.fields(5).name should be("station_id")
       resultDF1.schema.fields(5).dataType.typeName should be("string")
       resultDF1.schema.fields(6).name should be("name")
@@ -229,7 +229,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       row1.get(1) should be(14)
       row1.get(2) shouldBe true
       row1.get(3) shouldBe false
-      row1.get(4) should be(1628003918L)
+      row1.get(4) should be("2021-08-03T15:18:38Z")
       row1.get(5) should be("686e48654a218c70daf950a4e893e5b0")
       row1.get(6) should be("8149-391 MICHELET")
       row1.get(7) should be(43.25402727813068)

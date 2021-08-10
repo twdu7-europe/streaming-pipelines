@@ -2,12 +2,12 @@ package com.tw.apps
 
 import java.time.Instant
 import java.time.format.DateTimeFormatter
-
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{udf, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
+import java.time.temporal.ChronoUnit
 import scala.util.parsing.json.JSON
 
 object StationDataTransformation {
@@ -41,7 +41,7 @@ object StationDataTransformation {
           x("empty_slots").asInstanceOf[Double].toInt,
           x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
           x("extra").asInstanceOf[Map[String, Any]]("returning").asInstanceOf[Double] == 1,
-          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
+          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).truncatedTo(ChronoUnit.SECONDS).toString,
           x("id").asInstanceOf[String],
           x("name").asInstanceOf[String],
           x("latitude").asInstanceOf[Double],
@@ -63,7 +63,7 @@ object StationDataTransformation {
           x("empty_slots").asInstanceOf[Double].toInt,
           true,
           true,
-          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
+          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).truncatedTo(ChronoUnit.SECONDS).toString,
           x("id").asInstanceOf[String],
           x("name").asInstanceOf[String],
           x("latitude").asInstanceOf[Double],

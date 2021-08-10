@@ -12,7 +12,7 @@ RUN \
 RUN apt-get install -y sbt
 
 RUN \
-  curl -fsL https://archive.apache.org/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz | tar xfz - -C /root/
+  curl -fsL https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz | tar xfz - -C /root/
 
 RUN \
   curl -fsL http://mirrors.hust.edu.cn/apache/kafka/2.0.0/kafka_2.11-2.0.0.tgz | tar xfz - -C /root/
@@ -28,7 +28,7 @@ EXPOSE 2181
 EXPOSE 18080
 EXPOSE 8080
 
-ENV PATH "$PATH:/root/spark-2.3.0-bin-hadoop2.7/sbin:/root/spark-2.3.0-bin-hadoop2.7/bin:/root/kafka_2.11-2.0.0/bin"
+ENV PATH "$PATH:/root/spark-2.4.0-bin-hadoop2.7/sbin:/root/spark-2.4.0-bin-hadoop2.7/bin:/root/kafka_2.11-2.0.0/bin"
 
 COPY setup.sh /root/
 
