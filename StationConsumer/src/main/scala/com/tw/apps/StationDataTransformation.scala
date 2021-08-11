@@ -8,13 +8,14 @@ import org.apache.spark.sql.functions.{udf, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import java.time.temporal.ChronoUnit
+import javax.validation.Payload
 import scala.util.parsing.json.JSON
 
 object StationDataTransformation {
 
-  val sfToStationStatus: String => Seq[StationData] = raw_payload => {
+  val usToStationStatus: String => Seq[StationData] = raw_payload => {
     val payload: Any = preparePayload(raw_payload)
-    extractSFStationStatus(payload)
+    extractUSStationStatus(payload)
   }
 
   val marseilleToStationStatus: String => Seq[StationData] = raw_payload => {
@@ -22,13 +23,14 @@ object StationDataTransformation {
     extractMarseilleStationStatus(payload)
   }
 
+
   private def preparePayload(raw_payload: String): Any = {
     val json = JSON.parseFull(raw_payload)
     val payload = json.get.asInstanceOf[Map[String, Any]]("payload")
     payload
   }
 
-  private def extractSFStationStatus(payload: Any) = {
+  private def extractUSStationStatus(payload: Any) = {
 
     val network: Any = payload.asInstanceOf[Map[String, Any]]("network")
 
@@ -72,8 +74,9 @@ object StationDataTransformation {
       })
   }
 
-  def sfStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
-    val toStatusFn: UserDefinedFunction = udf(sfToStationStatus)
+
+  def usStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
+    val toStatusFn: UserDefinedFunction = udf(usToStationStatus)
 
     import spark.implicits._
 
@@ -96,4 +99,5 @@ object StationDataTransformation {
     jsonDF.select(explode(toStatusFn(jsonDF("raw_payload"))) as "status")
       .select($"status.*")
   }
+
 }

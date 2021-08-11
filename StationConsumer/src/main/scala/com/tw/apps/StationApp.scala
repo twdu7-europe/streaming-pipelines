@@ -6,7 +6,6 @@ import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, from_unixtime}
 
-import java.time.LocalDateTime
 
 object StationApp {
 
@@ -22,9 +21,10 @@ object StationApp {
 
     val stationKafkaBrokers = new String(zkClient.getData.forPath("/tw/stationStatus/kafkaBrokers"))
 
-    val nycStationTopic = new String(zkClient.getData.watched.forPath("/tw/stationDataNYC/topic"))
+//    val nycStationTopic = new String(zkClient.getData.watched.forPath("/tw/stationDataNYC/topic"))
     val sfStationTopic = new String(zkClient.getData.watched.forPath("/tw/stationDataSF/topic"))
     val marsStationTopic = new String(zkClient.getData.watched.forPath("/tw/stationDataMars/topic"))
+    val nycV2StationTopic = new String(zkClient.getData.watched.forPath("/tw/stationDataNYCV2/topic"))
 
     val checkpointLocation = new String(
       zkClient.getData.watched.forPath("/tw/output/checkpointLocation"))
@@ -38,16 +38,16 @@ object StationApp {
 
     import spark.implicits._
 
-    val nycStationDF = spark.readStream
-      .format("kafka")
-      .option("kafka.bootstrap.servers", stationKafkaBrokers)
-      .option("subscribe", nycStationTopic)
-      .option("startingOffsets", "latest")
-      .option("failOnDataLoss", false)
-      .option("auto.offset.reset", "latest")
-      .load()
-      .selectExpr("CAST(value AS STRING) as raw_payload")
-      .transform(nycStationStatusJson2DF(_, spark))
+//    val nycStationDF = spark.readStream
+//      .format("kafka")
+//      .option("kafka.bootstrap.servers", stationKafkaBrokers)
+//      .option("subscribe", nycStationTopic)
+//      .option("startingOffsets", "latest")
+//      .option("failOnDataLoss", false)
+//      .option("auto.offset.reset", "latest")
+//      .load()
+//      .selectExpr("CAST(value AS STRING) as raw_payload")
+//      .transform(nycStationStatusJson2DF(_, spark))
 
     val sfStationDF = spark.readStream
       .format("kafka")
@@ -58,7 +58,7 @@ object StationApp {
       .option("auto.offset.reset", "latest")
       .load()
       .selectExpr("CAST(value AS STRING) as raw_payload")
-      .transform(sfStationStatusJson2DF(_, spark))
+      .transform(usStationStatusJson2DF(_, spark))
 
     val marsStationDF = spark.readStream
       .format("kafka")
@@ -71,7 +71,18 @@ object StationApp {
       .selectExpr("CAST(value AS STRING) as raw_payload")
       .transform(marsStationStatusJson2DF(_, spark))
 
-    nycStationDF
+    val nycV2DF = spark.readStream
+      .format("kafka")
+      .option("kafka.bootstrap.servers", stationKafkaBrokers)
+      .option("subscribe", nycV2StationTopic)
+      .option("startingOffsets", "latest")
+      .option("failOnDataLoss", false)
+      .option("auto.offset.reset", "latest")
+      .load()
+      .selectExpr("CAST(value AS STRING) as raw_payload")
+      .transform(usStationStatusJson2DF(_, spark))
+
+    nycV2DF
       .union(sfStationDF)
       .union(marsStationDF)
       .as[StationData]

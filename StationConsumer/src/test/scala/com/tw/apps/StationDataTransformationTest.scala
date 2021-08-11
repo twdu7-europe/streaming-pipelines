@@ -1,6 +1,6 @@
 package com.tw.apps
 
-import com.tw.apps.StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF, sfStationStatusJson2DF}
+import com.tw.apps.StationDataTransformation.{marsStationStatusJson2DF, nycStationStatusJson2DF, usStationStatusJson2DF}
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.scalatest._
@@ -162,7 +162,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       row1.get(8) should be(5.401873594694653)
     }
 
-    scenario("Transform SF station data") {
+    scenario("Transform US station data") {
       val testDataSF =
         """{"payload": {"network": {
             "company": [
@@ -202,7 +202,7 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       val testDF1 = Seq(testDataSF).toDF("raw_payload")
 
       When("Transformations are applied")
-      val resultDF1: DataFrame = testDF1.transform(sfStationStatusJson2DF(_, spark))
+      val resultDF1: DataFrame = testDF1.transform(usStationStatusJson2DF(_, spark))
 
       Then("Useful columns are extracted")
       resultDF1.schema.fields(0).name should be("bikes_available")
@@ -235,5 +235,6 @@ class StationDataTransformationTest extends FeatureSpec with Matchers with Given
       row1.get(7) should be(43.25402727813068)
       row1.get(8) should be(5.401873594694653)
     }
+
   }
 }
