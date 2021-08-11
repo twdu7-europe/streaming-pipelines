@@ -4,6 +4,7 @@ import StationDataTransformation._
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, from_unixtime}
 
 import java.time.LocalDateTime
 
@@ -75,8 +76,9 @@ object StationApp {
       .union(marsStationDF)
       .as[StationData]
       .groupByKey(r=>r.station_id)
-      .reduceGroups((r1,r2)=>if (LocalDateTime.parse(r1.last_updated).isAfter(LocalDateTime.parse(r2.last_updated))) r1 else r2)
+      .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
       .map(_._2)
+      .withColumn("iso_timestamp",from_unixtime(col("last_updated"), "yyyy-MM-dd HH:mm:ss"))
       .writeStream
       .format("overwriteCSV")
       .outputMode("complete")

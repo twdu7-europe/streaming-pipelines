@@ -171,7 +171,6 @@ services:
           - station-status-producer
           - station-san-francisco-producer
           - station-marseille-producer
-          - raw-station-status-data-saver
         volumes:
           - ~/.ivy2:/root/.ivy2:rw
         command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
