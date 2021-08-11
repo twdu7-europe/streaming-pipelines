@@ -1,5 +1,7 @@
 package com.tw.apps
 
+import java.time.Instant
+
 case class StationData(
                         bikes_available: Integer,
                         docks_available: Integer,
