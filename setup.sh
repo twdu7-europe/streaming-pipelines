@@ -21,6 +21,8 @@ mkdir -p /tmp/tw/rawData/stationStatus/checkpoints
 mkdir -p /tmp/tw/rawData/stationStatus/data
 mkdir -p /tmp/tw/rawData/stationSanFrancisco/checkpoints
 mkdir -p /tmp/tw/rawData/stationSanFrancisco/data
+mkdir -p /tmp/tw/rawData/stationDataNYCV2/checkpoints
+mkdir -p /tmp/tw/rawData/stationDataNYCV2/data
 mkdir -p /tmp/tw/stationMart/checkpoints
 mkdir -p /tmp/tw/stationMart/data
 
