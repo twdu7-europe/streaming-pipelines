@@ -12,5 +12,4 @@ $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/rawData/stationInformation
 && $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/rawData/stationDataMars/data \
 && $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/rawData/stationDataNYC/checkpoints \
 && $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/stationMart/checkpoints \
-&& $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/stationMart/data \
-&& $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/stationMart/invalidData
+&& $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /tw/stationMart/data

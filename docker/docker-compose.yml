@@ -90,114 +90,109 @@ services:
       networks:
         - streaming-data-internal
 
-  raw-station-information-data-saver:
-    build:
-      context: ../RawDataSaver
-      dockerfile: Dockerfile-station-information
-    depends_on:
-      - kafka
-      - station-information-producer
-      - station-status-producer
-      - station-san-francisco-producer
-      - station-marseille-producer
-      - hadoop-seed
-      - zookeeper-seed
-    volumes:
-      - ~/.ivy2:/root/.ivy2:rw
-    networks:
-      - streaming-data-internal
-    restart: on-failure
+    raw-station-information-data-saver:
+        build:
+            context: ../RawDataSaver
+            dockerfile: Dockerfile-station-information
+        depends_on:
+          - kafka
+          - station-information-producer
+          - station-status-producer
+          - station-san-francisco-producer
+          - station-marseille-producer
+          - hadoop-seed
+          - zookeeper-seed
+        volumes:
+          - ~/.ivy2:/root/.ivy2:rw
+        networks:
+          - streaming-data-internal
+        restart: on-failure
 
-  raw-station-status-data-saver:
-    build:
-      context: ../RawDataSaver
-      dockerfile: Dockerfile-station-status
-    depends_on:
-      - kafka
-      - station-information-producer
-      - station-status-producer
-      - station-san-francisco-producer
-      - station-marseille-producer
-      - hadoop-seed
-      - zookeeper-seed
-    volumes:
-      - ~/.ivy2:/root/.ivy2:rw
-    networks:
-      - streaming-data-internal
-    restart: on-failure
+    raw-station-status-data-saver:
+        build:
+            context: ../RawDataSaver
+            dockerfile: Dockerfile-station-status
+        depends_on:
+          - kafka
+          - station-information-producer
+          - station-status-producer
+          - station-san-francisco-producer
+          - station-marseille-producer
+          - hadoop-seed
+          - zookeeper-seed
+        volumes:
+          - ~/.ivy2:/root/.ivy2:rw
+        networks:
+          - streaming-data-internal
+        restart: on-failure
 
-  raw-station-data-san-francisco-saver:
-    build:
-      context: ../RawDataSaver
-      dockerfile: Dockerfile-station-data-SF
-    depends_on:
-      - kafka
-      - station-information-producer
-      - station-status-producer
-      - station-san-francisco-producer
-      - station-marseille-producer
-      - hadoop-seed
-      - zookeeper-seed
-    volumes:
-      - ~/.ivy2:/root/.ivy2:rw
-    networks:
-      - streaming-data-internal
-    restart: on-failure
+    raw-station-data-san-francisco-saver:
+        build:
+            context: ../RawDataSaver
+            dockerfile: Dockerfile-station-data-SF
+        depends_on:
+          - kafka
+          - station-information-producer
+          - station-status-producer
+          - station-san-francisco-producer
+          - station-marseille-producer
+          - hadoop-seed
+          - zookeeper-seed
+        volumes:
+          - ~/.ivy2:/root/.ivy2:rw
+        networks:
+          - streaming-data-internal
+        restart: on-failure
 
-  raw-station-data-marseille-saver:
-    build:
-      context: ../RawDataSaver
-      dockerfile: Dockerfile-station-data-Mars
-    depends_on:
-      - kafka
-      - station-information-producer
-      - station-status-producer
-      - station-san-francisco-producer
-      - station-marseille-producer
-      - hadoop-seed
-      - zookeeper-seed
-    volumes:
-      - ~/.ivy2:/root/.ivy2:rw
-    networks:
-      - streaming-data-internal
-    restart: on-failure
-
-  station-consumer:
+    raw-station-data-marseille-saver:
       build:
-          context: ../StationConsumer
+        context: ../RawDataSaver
+        dockerfile: Dockerfile-station-data-Mars
       depends_on:
-        - zookeeper-seed
         - kafka
+        - station-information-producer
         - station-status-producer
         - station-san-francisco-producer
         - station-marseille-producer
+        - hadoop-seed
+        - zookeeper-seed
       volumes:
         - ~/.ivy2:/root/.ivy2:rw
-      command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
       networks:
         - streaming-data-internal
-      ports:
-        - "4040:4040"
-        - "8080:8080"
-        - "8081:8081"
-        - "18080:18080"
       restart: on-failure
 
-  station-transformer-nyc:
-      build:
-          context: ../StationTransformerNYC
-      depends_on:
-        - zookeeper-seed
-        - hadoop-seed
-        - kafka
-        - station-status-producer
-        - station-information-producer
-      volumes:
-        - ~/.ivy2:/root/.ivy2:rw
-      command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
-      networks:
-        - streaming-data-internal
-      restart: on-failure
+    station-consumer:
+        build:
+            context: ../StationConsumer
+        depends_on:
+          - zookeeper-seed
+          - kafka
+          - station-status-producer
+          - station-san-francisco-producer
+          - station-marseille-producer
+        volumes:
+          - ~/.ivy2:/root/.ivy2:rw
+        command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
+        networks:
+          - streaming-data-internal
+        restart: on-failure
+
+    station-transformer-nyc:
+        build:
+            context: ../StationTransformerNYC
+        depends_on:
+          - zookeeper-seed
+          - hadoop-seed
+          - kafka
+          - station-status-producer
+          - station-information-producer
+        volumes:
+          - ~/.ivy2:/root/.ivy2:rw
+        command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
+        networks:
+          - streaming-data-internal
+        restart: on-failure
 
 networks:
     streaming-data-internal:

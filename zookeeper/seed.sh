@@ -34,5 +34,3 @@ $zk_command create /tw/stationDataMars/dataLocation hdfs://$hdfs_server/tw/rawDa
 $zk_command create /tw/output ''
 $zk_command create /tw/output/checkpointLocation hdfs://$hdfs_server/tw/stationMart/checkpoints
 $zk_command create /tw/output/dataLocation hdfs://$hdfs_server/tw/stationMart/data
-
-$zk_command create /tw/output/invalidDataLocation hdfs://$hdfs_server/tw/stationMart/invalidData
