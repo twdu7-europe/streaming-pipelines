@@ -31,7 +31,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
-      assert(filteredResult sameElements expectedResult)
+      assert(filteredResult.collect() sameElements expectedResult)
     }
 
     scenario("Validating missing latitude") {
@@ -51,7 +51,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
-      assert(filteredResult sameElements expectedResult)
+      assert(filteredResult.collect() sameElements expectedResult)
     }
 
     scenario("Validating bikes available is a non-negative number") {
@@ -71,7 +71,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
-      assert(filteredResult sameElements expectedResult)
+      assert(filteredResult.collect() sameElements expectedResult)
     }
 
     scenario("Validating docks available is a non-negative number") {
@@ -91,7 +91,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
-      assert(filteredResult sameElements expectedResult)
+      assert(filteredResult.collect() sameElements expectedResult)
     }
 
     scenario("Validating station ids are listed once") {
@@ -112,7 +112,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (filteredResult, _) = filterValidData(transformedDF)
 
       Then("Only valid rows are retrieved")
-      assert(filteredResult sameElements expectedResult)
+      assert(filteredResult.collect() sameElements expectedResult)
     }
   }
 
@@ -137,7 +137,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (_, filteredInvalidData) = filterValidData(transformedDF)
 
       Then("Empty array should be returned")
-      assert(filteredInvalidData sameElements expectedResult)
+      assert(filteredInvalidData.collect() sameElements expectedResult)
     }
 
     scenario("Should return only invalid data") {
@@ -158,7 +158,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (_, filteredInvalidData) = filterValidData(transformedDF)
 
       Then("Only invalid data should be returned")
-      assert(filteredInvalidData sameElements expectedResult)
+      assert(filteredInvalidData.collect() sameElements expectedResult)
     }
 
     scenario("Should return as invalid data when having duplicated station_id") {
@@ -184,7 +184,7 @@ class StationDataValidatorTest extends FeatureSpec with Matchers with GivenWhenT
       val (_, filteredInvalidData) = filterValidData(transformedDF)
 
       Then("Only invalid data should be returned")
-      assert(filteredInvalidData sameElements expectedResult)
+      assert(filteredInvalidData.collect() sameElements expectedResult)
     }
 
   }
