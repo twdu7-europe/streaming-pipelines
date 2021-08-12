@@ -1,6 +1,6 @@
 package com.tw.apps
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.time.format.DateTimeFormatter
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.UserDefinedFunction
@@ -36,6 +36,8 @@ object StationDataTransformation {
 
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
 
+    val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-dd-MM'T'HH:mm:ss.SSSSSSX")
+
     stations.asInstanceOf[Seq[Map[String, Any]]]
       .map(x => {
         StationData(
@@ -43,7 +45,7 @@ object StationDataTransformation {
           x("empty_slots").asInstanceOf[Double].toInt,
           x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
           x("extra").asInstanceOf[Map[String, Any]]("returning").asInstanceOf[Double] == 1,
-          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
+          LocalDateTime.parse(x("timestamp").asInstanceOf[String], dateTimeFormat).toEpochSecond(ZoneOffset.UTC),
           x("id").asInstanceOf[String],
           x("name").asInstanceOf[String],
           x("latitude").asInstanceOf[Double],
