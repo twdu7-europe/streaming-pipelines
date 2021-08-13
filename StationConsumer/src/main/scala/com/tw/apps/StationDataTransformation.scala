@@ -7,6 +7,7 @@ import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{udf, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
+import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 import java.time.temporal.ChronoUnit
 import javax.validation.Payload
 import scala.util.parsing.json.JSON
@@ -31,12 +32,8 @@ object StationDataTransformation {
   }
 
   private def extractUSStationStatus(payload: Any) = {
-
     val network: Any = payload.asInstanceOf[Map[String, Any]]("network")
-
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
-
-    val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-dd-MM'T'HH:mm:ss.SSSSSSX")
 
     stations.asInstanceOf[Seq[Map[String, Any]]]
       .map(x => {
@@ -45,7 +42,7 @@ object StationDataTransformation {
           x("empty_slots").asInstanceOf[Double].toInt,
           x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
           x("extra").asInstanceOf[Map[String, Any]]("returning").asInstanceOf[Double] == 1,
-          LocalDateTime.parse(x("timestamp").asInstanceOf[String], dateTimeFormat).toEpochSecond(ZoneOffset.UTC),
+          LocalDateTime.parse(x("timestamp").asInstanceOf[String], ISO_DATE_TIME).toEpochSecond(ZoneOffset.UTC),
           x("id").asInstanceOf[String],
           x("name").asInstanceOf[String],
           x("latitude").asInstanceOf[Double],
